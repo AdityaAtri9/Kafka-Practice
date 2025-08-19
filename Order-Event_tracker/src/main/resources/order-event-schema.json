@@ -1,0 +1,19 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema#",
+	"type": "object",
+	"title": "OrderEvent",
+	"properties": {
+		"orderId": {"type": "string"},
+		"customerName": {"type":"string"},
+		"amount": {"type": "number"},
+		"status": {"type": "string"},
+		"items": {
+			"type": "array",
+			"items": {
+				"type": "string"
+			}
+		}
+	},
+	
+	"required": ["orderId", "customerName", "amount", "status"]
+}
