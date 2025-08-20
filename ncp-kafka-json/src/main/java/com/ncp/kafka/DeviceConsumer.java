@@ -69,6 +69,14 @@ public class DeviceConsumer {
                         System.err.println("Invalid message: " + record.value());
                         e.printStackTrace();
 					}
+					
+					finally
+					{
+						if(consumer != null)
+						{
+							consumer.close();
+						}
+					}
 				}
 			}
 		}
@@ -77,6 +85,8 @@ public class DeviceConsumer {
 		{
 			e.printStackTrace();
 		}
+		
+		
 	}
 
 }
