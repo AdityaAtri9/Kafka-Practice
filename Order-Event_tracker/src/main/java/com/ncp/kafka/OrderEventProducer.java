@@ -15,7 +15,6 @@ import org.everit.json.schema.loader.SchemaLoader;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class OrderEventProducer 
@@ -33,6 +32,13 @@ public class OrderEventProducer
 					props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
 					props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
 					props.put(ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG, "true");
+					props.put(ProducerConfig.ACKS_CONFIG, "all");
+					props.put(ProducerConfig.MAX_IN_FLIGHT_REQUESTS_PER_CONNECTION, 1);
+					props.put(ProducerConfig.RETRIES_CONFIG, Integer.MAX_VALUE);
+					props.put(ProducerConfig.DELIVERY_TIMEOUT_MS_CONFIG, 120000);
+					props.put(ProducerConfig.BATCH_SIZE_CONFIG, 32*1024);
+					props.put(ProducerConfig.LINGER_MS_CONFIG, 20);
+					props.put(ProducerConfig.COMPRESSION_TYPE_CONFIG, "snappy");
 					
 					KafkaProducer<String, String> producer = new KafkaProducer<>(props);
 					
@@ -56,6 +62,8 @@ public class OrderEventProducer
 					String itemsInput = sc.nextLine();
 					List<String> items = Arrays.asList(itemsInput.split(","));
 					
+					sc.close();
+					
 					// Create order event
 					OrderEventSchema order = new OrderEventSchema();
 					order.setOrderId(OrderId);
@@ -78,7 +86,16 @@ public class OrderEventProducer
 					Create a Kafka object for topic "order-events" whose key is order.getId() (String) and whose value is jsonValue (String)
 					- ready to be sent by KafkaProducer<String, String>. */
 					
-					producer.send(record);
+					producer.send(record, (Metadata, exception) -> {
+						if(exception == null)
+						{
+							System.out.println("Record is sent to topic " + Metadata.topic() + " partition " + Metadata.partition() + " Offset " + Metadata.offset());
+						}
+						else
+						{
+							System.out.println("Error sending record: " + exception.getMessage());
+						}
+					});
 					System.out.println("Order sent successfully");
 					producer.close();
 				}
