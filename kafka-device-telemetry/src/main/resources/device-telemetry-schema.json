@@ -1,0 +1,30 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema#",
+	"title": "DeviceTelemetry",
+	"type": "object",
+	
+	"properties": {
+		"deviceId": {
+			"type": "string"
+		},
+		
+		"timestamp":{
+			"type":"string",
+			"format":"date-time"
+		},
+		
+		"temperature":{
+			"type":"number"
+		},
+		
+		"humidity":{
+			"type":"number"
+		},
+		
+		"status":{
+			"type":"string"
+		}
+	},
+	
+	"required": ["deviceId", "timestamp", "temperature", "humidity", "status"]
+}
