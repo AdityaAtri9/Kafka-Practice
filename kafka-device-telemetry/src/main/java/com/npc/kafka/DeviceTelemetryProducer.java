@@ -75,7 +75,7 @@ public class DeviceTelemetryProducer {
 			String jsonValue = mapper.writeValueAsString(dts);
 			schema.validate(new JSONObject(jsonValue));
 			
-			ProducerRecord<String, String>  record = new ProducerRecord<>("device-telemetry",dts.getDeviceId(), jsonValue);
+			ProducerRecord<String, String> record = new ProducerRecord<>("device-telemetry",dts.getDeviceId(), jsonValue);
 			
 			producer.send(record, (Metadata, exception) -> {
 				if(exception == null)
